@@ -1,0 +1,1253 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>마이크로 컨트롤러 예제 문제 - 공업고등학교</title>
+    <meta name="description" content="Arduino와 ESP32를 활용한 마이크로 컨트롤러 기초 예제 문제 10개">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=Roboto+Mono:wght@400;500;700&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #667eea;
+            --primary-dark: #5568d3;
+            --secondary: #764ba2;
+            --accent: #f093fb;
+            --success: #4ade80;
+            --warning: #fbbf24;
+            --danger: #f87171;
+            --dark-bg: #0f172a;
+            --dark-surface: #1e293b;
+            --dark-elevated: #334155;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --text-on-dark: #f1f5f9;
+            --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            line-height: 1.6;
+            color: var(--text-primary);
+            background: #f8fafc;
+        }
+
+        .header {
+            background: var(--gradient-primary);
+            color: white;
+            padding: 3rem 1rem;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 900;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            font-size: 1.125rem;
+            opacity: 0.95;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+
+        .filters {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .filter-btn {
+            padding: 0.75rem 1.5rem;
+            border: 2px solid var(--primary);
+            background: white;
+            color: var(--primary);
+            border-radius: 2rem;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            font-family: 'Noto Sans KR', sans-serif;
+        }
+
+        .filter-btn:hover,
+        .filter-btn.active {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        .problem-card {
+            background: white;
+            border-radius: 1rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s;
+            border-left: 4px solid var(--primary);
+        }
+
+        .problem-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .problem-card.beginner {
+            border-left-color: var(--success);
+        }
+
+        .problem-card.intermediate {
+            border-left-color: var(--warning);
+        }
+
+        .problem-card.advanced {
+            border-left-color: var(--danger);
+        }
+
+        .problem-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .problem-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .difficulty-badge {
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+            font-size: 0.875rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .difficulty-badge.beginner {
+            background: rgba(74, 222, 128, 0.2);
+            color: #16a34a;
+            border: 2px solid var(--success);
+        }
+
+        .difficulty-badge.intermediate {
+            background: rgba(251, 191, 36, 0.2);
+            color: #d97706;
+            border: 2px solid var(--warning);
+        }
+
+        .difficulty-badge.advanced {
+            background: rgba(248, 113, 113, 0.2);
+            color: #dc2626;
+            border: 2px solid var(--danger);
+        }
+
+        .stars {
+            color: #fbbf24;
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+        }
+
+        .problem-description {
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+            line-height: 1.8;
+        }
+
+        .requirements {
+            background: #f8fafc;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1.5rem;
+            border-left: 3px solid var(--primary);
+        }
+
+        .requirements h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .requirements ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .requirements li {
+            padding: 0.5rem 0;
+            padding-left: 1.5rem;
+            position: relative;
+            color: var(--text-secondary);
+        }
+
+        .requirements li::before {
+            content: '▸';
+            position: absolute;
+            left: 0;
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        .code-section {
+            margin-top: 1.5rem;
+        }
+
+        .toggle-btn {
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s;
+            font-family: 'Noto Sans KR', sans-serif;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .toggle-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .code-container {
+            display: none;
+            margin-top: 1rem;
+            position: relative;
+        }
+
+        .code-container.show {
+            display: block;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        pre {
+            background: var(--dark-bg);
+            color: #e2e8f0;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            overflow-x: auto;
+            position: relative;
+        }
+
+        code {
+            font-family: 'Roboto Mono', monospace;
+            font-size: 0.875rem;
+            line-height: 1.6;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(102, 126, 234, 0.9);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            cursor: pointer;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+            font-family: 'Noto Sans KR', sans-serif;
+        }
+
+        .copy-btn:hover {
+            background: var(--primary);
+        }
+
+        .learning-points {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .learning-points h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+
+        .learning-points ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .learning-points li {
+            padding: 0.5rem 0;
+            padding-left: 1.5rem;
+            position: relative;
+            color: var(--text-secondary);
+        }
+
+        .learning-points li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--success);
+            font-weight: bold;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 1rem;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 900;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+        }
+
+        .footer {
+            background: var(--dark-bg);
+            color: var(--text-on-dark);
+            text-align: center;
+            padding: 2rem 1rem;
+            margin-top: 3rem;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .problem-title {
+                font-size: 1.5rem;
+            }
+
+            .filters {
+                flex-direction: column;
+            }
+
+            .filter-btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <h1>🎓 마이크로 컨트롤러 예제 문제</h1>
+        <p>Arduino와 ESP32를 활용한 기초부터 고급까지</p>
+    </div>
+
+    <div class="container">
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-number">10</div>
+                <div class="stat-label">총 문제 수</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">3</div>
+                <div class="stat-label">난이도 단계</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">100%</div>
+                <div class="stat-label">실습 기반</div>
+            </div>
+        </div>
+
+        <div class="filters">
+            <button class="filter-btn active" data-filter="all">전체 보기</button>
+            <button class="filter-btn" data-filter="beginner">🟢 기초</button>
+            <button class="filter-btn" data-filter="intermediate">🟡 중급</button>
+            <button class="filter-btn" data-filter="advanced">🔴 고급</button>
+        </div>
+
+        <div id="problems-container">
+            <!-- Problem 1 -->
+            <div class="problem-card beginner" data-difficulty="beginner">
+                <div class="problem-header">
+                    <h2 class="problem-title">문제 1: LED 깜빡이기 (Blink)</h2>
+                    <span class="difficulty-badge beginner">기초</span>
+                </div>
+                <div class="stars">⭐☆☆☆☆</div>
+                <p class="problem-description">
+                    Arduino Uno를 사용하여 13번 핀에 연결된 LED를 1초 간격으로 깜빡이게 하는 프로그램을 작성하시오.
+                </p>
+                <div class="requirements">
+                    <h4>조건</h4>
+                    <ul>
+                        <li>LED ON: 1초</li>
+                        <li>LED OFF: 1초</li>
+                        <li>무한 반복</li>
+                    </ul>
+                </div>
+                <button class="toggle-btn" onclick="toggleCode(1)">
+                    <span>💡</span> 예시 답안 보기
+                </button>
+                <div class="code-container" id="code-1">
+                    <pre><code>void setup() {
+  pinMode(13, OUTPUT);  // 13번 핀을 출력으로 설정
+}
+
+void loop() {
+  digitalWrite(13, HIGH);  // LED 켜기
+  delay(1000);             // 1초 대기
+  digitalWrite(13, LOW);   // LED 끄기
+  delay(1000);             // 1초 대기
+}</code></pre>
+                    <button class="copy-btn" onclick="copyCode(1)">복사</button>
+                </div>
+                <div class="learning-points">
+                    <h4>학습 포인트</h4>
+                    <ul>
+                        <li>pinMode() 함수로 핀 모드 설정</li>
+                        <li>digitalWrite() 함수로 디지털 출력</li>
+                        <li>delay() 함수로 시간 지연</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Problem 2 -->
+            <div class="problem-card beginner" data-difficulty="beginner">
+                <div class="problem-header">
+                    <h2 class="problem-title">문제 2: 버튼으로 LED 제어</h2>
+                    <span class="difficulty-badge beginner">기초</span>
+                </div>
+                <div class="stars">⭐⭐☆☆☆</div>
+                <p class="problem-description">
+                    2번 핀에 연결된 버튼을 누르면 13번 핀의 LED가 켜지고, 버튼을 떼면 LED가 꺼지는 프로그램을 작성하시오.
+                </p>
+                <div class="requirements">
+                    <h4>회로 구성</h4>
+                    <ul>
+                        <li>버튼: 2번 핀 (풀다운 저항 사용)</li>
+                        <li>LED: 13번 핀</li>
+                    </ul>
+                    <h4>조건</h4>
+                    <ul>
+                        <li>버튼을 누르는 동안만 LED가 켜져야 함</li>
+                        <li>시리얼 모니터에 버튼 상태 출력</li>
+                    </ul>
+                </div>
+                <button class="toggle-btn" onclick="toggleCode(2)">
+                    <span>💡</span> 예시 답안 보기
+                </button>
+                <div class="code-container" id="code-2">
+                    <pre><code>const int buttonPin = 2;  // 버튼 핀
+const int ledPin = 13;    // LED 핀
+
+void setup() {
+  pinMode(buttonPin, INPUT);   // 버튼 핀을 입력으로 설정
+  pinMode(ledPin, OUTPUT);     // LED 핀을 출력으로 설정
+  Serial.begin(9600);          // 시리얼 통신 시작
+}
+
+void loop() {
+  int buttonState = digitalRead(buttonPin);  // 버튼 상태 읽기
+  
+  if (buttonState == HIGH) {
+    digitalWrite(ledPin, HIGH);  // 버튼이 눌리면 LED 켜기
+    Serial.println("버튼 눌림 - LED ON");
+  } else {
+    digitalWrite(ledPin, LOW);   // 버튼이 떼지면 LED 끄기
+    Serial.println("버튼 떼짐 - LED OFF");
+  }
+  
+  delay(100);  // 디바운싱을 위한 짧은 지연
+}</code></pre>
+                    <button class="copy-btn" onclick="copyCode(2)">복사</button>
+                </div>
+                <div class="learning-points">
+                    <h4>학습 포인트</h4>
+                    <ul>
+                        <li>digitalRead() 함수로 디지털 입력 읽기</li>
+                        <li>조건문(if-else)을 이용한 제어</li>
+                        <li>시리얼 통신 기초</li>
+                        <li>디바운싱 개념</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Problem 3 -->
+            <div class="problem-card beginner" data-difficulty="beginner">
+                <div class="problem-header">
+                    <h2 class="problem-title">문제 3: 신호등 시스템</h2>
+                    <span class="difficulty-badge beginner">기초</span>
+                </div>
+                <div class="stars">⭐⭐☆☆☆</div>
+                <p class="problem-description">
+                    빨강(8번), 노랑(9번), 초록(10번) LED를 사용하여 신호등 시스템을 구현하시오.
+                </p>
+                <div class="requirements">
+                    <h4>동작 순서</h4>
+                    <ul>
+                        <li>빨강 LED 5초 점등</li>
+                        <li>노랑 LED 2초 점등</li>
+                        <li>초록 LED 5초 점등</li>
+                        <li>반복</li>
+                    </ul>
+                </div>
+                <button class="toggle-btn" onclick="toggleCode(3)">
+                    <span>💡</span> 예시 답안 보기
+                </button>
+                <div class="code-container" id="code-3">
+                    <pre><code>const int redPin = 8;
+const int yellowPin = 9;
+const int greenPin = 10;
+
+void setup() {
+  pinMode(redPin, OUTPUT);
+  pinMode(yellowPin, OUTPUT);
+  pinMode(greenPin, OUTPUT);
+}
+
+void loop() {
+  // 빨강 신호
+  digitalWrite(redPin, HIGH);
+  digitalWrite(yellowPin, LOW);
+  digitalWrite(greenPin, LOW);
+  delay(5000);
+  
+  // 노랑 신호
+  digitalWrite(redPin, LOW);
+  digitalWrite(yellowPin, HIGH);
+  digitalWrite(greenPin, LOW);
+  delay(2000);
+  
+  // 초록 신호
+  digitalWrite(redPin, LOW);
+  digitalWrite(yellowPin, LOW);
+  digitalWrite(greenPin, HIGH);
+  delay(5000);
+}</code></pre>
+                    <button class="copy-btn" onclick="copyCode(3)">복사</button>
+                </div>
+                <div class="learning-points">
+                    <h4>학습 포인트</h4>
+                    <ul>
+                        <li>다중 출력 제어</li>
+                        <li>순차적 동작 구현</li>
+                        <li>실생활 응용 사례</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Problem 4 -->
+            <div class="problem-card beginner" data-difficulty="beginner">
+                <div class="problem-header">
+                    <h2 class="problem-title">문제 4: 시리얼 모니터로 LED 제어</h2>
+                    <span class="difficulty-badge beginner">기초</span>
+                </div>
+                <div class="stars">⭐⭐☆☆☆</div>
+                <p class="problem-description">
+                    시리얼 모니터에서 '1'을 입력하면 LED가 켜지고, '0'을 입력하면 LED가 꺼지는 프로그램을 작성하시오.
+                </p>
+                <div class="requirements">
+                    <h4>조건</h4>
+                    <ul>
+                        <li>LED: 13번 핀</li>
+                        <li>보드레이트: 9600</li>
+                        <li>잘못된 입력 시 오류 메시지 출력</li>
+                    </ul>
+                </div>
+                <button class="toggle-btn" onclick="toggleCode(4)">
+                    <span>💡</span> 예시 답안 보기
+                </button>
+                <div class="code-container" id="code-4">
+                    <pre><code>const int ledPin = 13;
+
+void setup() {
+  pinMode(ledPin, OUTPUT);
+  Serial.begin(9600);
+  Serial.println("LED 제어 프로그램 시작");
+  Serial.println("1: LED ON, 0: LED OFF");
+}
+
+void loop() {
+  if (Serial.available() > 0) {
+    char command = Serial.read();  // 시리얼 입력 읽기
+    
+    if (command == '1') {
+      digitalWrite(ledPin, HIGH);
+      Serial.println("LED가 켜졌습니다.");
+    } 
+    else if (command == '0') {
+      digitalWrite(ledPin, LOW);
+      Serial.println("LED가 꺼졌습니다.");
+    } 
+    else {
+      Serial.println("오류: '1' 또는 '0'을 입력하세요.");
+    }
+  }
+}</code></pre>
+                    <button class="copy-btn" onclick="copyCode(4)">복사</button>
+                </div>
+                <div class="learning-points">
+                    <h4>학습 포인트</h4>
+                    <ul>
+                        <li>시리얼 통신 활용</li>
+                        <li>Serial.available() 및 Serial.read() 사용</li>
+                        <li>사용자 입력 처리</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Problem 5 -->
+            <div class="problem-card intermediate" data-difficulty="intermediate">
+                <div class="problem-header">
+                    <h2 class="problem-title">문제 5: 가변 저항으로 LED 밝기 조절</h2>
+                    <span class="difficulty-badge intermediate">중급</span>
+                </div>
+                <div class="stars">⭐⭐⭐☆☆</div>
+                <p class="problem-description">
+                    A0 핀에 연결된 가변 저항(포텐셔미터)의 값을 읽어 9번 핀의 LED 밝기를 조절하는 프로그램을 작성하시오.
+                </p>
+                <div class="requirements">
+                    <h4>회로 구성</h4>
+                    <ul>
+                        <li>가변 저항: A0 핀 (아날로그 입력)</li>
+                        <li>LED: 9번 핀 (PWM 핀)</li>
+                    </ul>
+                    <h4>조건</h4>
+                    <ul>
+                        <li>가변 저항 값(0-1023)을 PWM 값(0-255)으로 변환</li>
+                        <li>시리얼 모니터에 현재 값 출력</li>
+                    </ul>
+                </div>
+                <button class="toggle-btn" onclick="toggleCode(5)">
+                    <span>💡</span> 예시 답안 보기
+                </button>
+                <div class="code-container" id="code-5">
+                    <pre><code>const int potPin = A0;   // 가변 저항 핀
+const int ledPin = 9;    // LED 핀 (PWM)
+
+void setup() {
+  pinMode(ledPin, OUTPUT);
+  Serial.begin(9600);
+}
+
+void loop() {
+  int potValue = analogRead(potPin);           // 아날로그 값 읽기 (0-1023)
+  int brightness = map(potValue, 0, 1023, 0, 255);  // 0-255로 변환
+  
+  analogWrite(ledPin, brightness);  // PWM 출력
+  
+  // 시리얼 모니터 출력
+  Serial.print("가변저항 값: ");
+  Serial.print(potValue);
+  Serial.print(" | LED 밝기: ");
+  Serial.println(brightness);
+  
+  delay(100);
+}</code></pre>
+                    <button class="copy-btn" onclick="copyCode(5)">복사</button>
+                </div>
+                <div class="learning-points">
+                    <h4>학습 포인트</h4>
+                    <ul>
+                        <li>analogRead() 함수로 아날로그 입력</li>
+                        <li>analogWrite() 함수로 PWM 출력</li>
+                        <li>map() 함수로 값 범위 변환</li>
+                        <li>PWM 개념 이해</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Problem 6 -->
+            <div class="problem-card intermediate" data-difficulty="intermediate">
+                <div class="problem-header">
+                    <h2 class="problem-title">문제 6: 온도 센서로 경고 시스템</h2>
+                    <span class="difficulty-badge intermediate">중급</span>
+                </div>
+                <div class="stars">⭐⭐⭐☆☆</div>
+                <p class="problem-description">
+                    DHT11 센서로 온도를 측정하여 30°C 이상이면 빨간 LED를 켜고 부저를 울리는 경고 시스템을 만드시오.
+                </p>
+                <div class="requirements">
+                    <h4>회로 구성</h4>
+                    <ul>
+                        <li>DHT11 센서: 2번 핀</li>
+                        <li>빨간 LED: 13번 핀</li>
+                        <li>부저: 8번 핀</li>
+                    </ul>
+                    <h4>필요 라이브러리</h4>
+                    <ul>
+                        <li>DHT sensor library by Adafruit</li>
+                    </ul>
+                </div>
+                <button class="toggle-btn" onclick="toggleCode(6)">
+                    <span>💡</span> 예시 답안 보기
+                </button>
+                <div class="code-container" id="code-6">
+                    <pre><code>#include &lt;DHT.h&gt;
+
+#define DHTPIN 2
+#define DHTTYPE DHT11
+
+const int ledPin = 13;
+const int buzzerPin = 8;
+const float tempThreshold = 30.0;  // 경고 온도
+
+DHT dht(DHTPIN, DHTTYPE);
+
+void setup() {
+  pinMode(ledPin, OUTPUT);
+  pinMode(buzzerPin, OUTPUT);
+  Serial.begin(9600);
+  dht.begin();
+  Serial.println("온도 경고 시스템 시작");
+}
+
+void loop() {
+  float temperature = dht.readTemperature();
+  
+  if (isnan(temperature)) {
+    Serial.println("센서 읽기 실패!");
+    return;
+  }
+  
+  Serial.print("현재 온도: ");
+  Serial.print(temperature);
+  Serial.println("°C");
+  
+  if (temperature >= tempThreshold) {
+    // 경고 상태
+    digitalWrite(ledPin, HIGH);
+    tone(buzzerPin, 1000);  // 1000Hz 소리
+    Serial.println("⚠️ 경고: 온도가 높습니다!");
+  } else {
+    // 정상 상태
+    digitalWrite(ledPin, LOW);
+    noTone(buzzerPin);
+    Serial.println("✓ 정상 온도");
+  }
+  
+  delay(1000);
+}</code></pre>
+                    <button class="copy-btn" onclick="copyCode(6)">복사</button>
+                </div>
+                <div class="learning-points">
+                    <h4>학습 포인트</h4>
+                    <ul>
+                        <li>DHT 라이브러리 사용</li>
+                        <li>센서 데이터 읽기 및 검증</li>
+                        <li>tone() 함수로 부저 제어</li>
+                        <li>임계값 기반 제어</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Problem 7 -->
+            <div class="problem-card intermediate" data-difficulty="intermediate">
+                <div class="problem-header">
+                    <h2 class="problem-title">문제 7: 초음파 센서로 거리 측정</h2>
+                    <span class="difficulty-badge intermediate">중급</span>
+                </div>
+                <div class="stars">⭐⭐⭐☆☆</div>
+                <p class="problem-description">
+                    HC-SR04 초음파 센서로 거리를 측정하여 LCD에 표시하고, 20cm 이하일 때 LED를 켜는 프로그램을 작성하시오.
+                </p>
+                <div class="requirements">
+                    <h4>회로 구성</h4>
+                    <ul>
+                        <li>HC-SR04: Trig(7번), Echo(6번)</li>
+                        <li>LCD 1602: I2C 연결</li>
+                        <li>LED: 13번 핀</li>
+                    </ul>
+                </div>
+                <button class="toggle-btn" onclick="toggleCode(7)">
+                    <span>💡</span> 예시 답안 보기
+                </button>
+                <div class="code-container" id="code-7">
+                    <pre><code>#include &lt;LiquidCrystal_I2C.h&gt;
+
+const int trigPin = 7;
+const int echoPin = 6;
+const int ledPin = 13;
+
+LiquidCrystal_I2C lcd(0x27, 16, 2);  // I2C 주소 0x27, 16x2 LCD
+
+void setup() {
+  pinMode(trigPin, OUTPUT);
+  pinMode(echoPin, INPUT);
+  pinMode(ledPin, OUTPUT);
+  
+  lcd.init();
+  lcd.backlight();
+  lcd.setCursor(0, 0);
+  lcd.print("Distance Meter");
+  delay(2000);
+  lcd.clear();
+  
+  Serial.begin(9600);
+}
+
+void loop() {
+  // 초음파 발생
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(2);
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin, LOW);
+  
+  // Echo 신호 수신
+  long duration = pulseIn(echoPin, HIGH);
+  
+  // 거리 계산 (cm)
+  float distance = duration * 0.034 / 2;
+  
+  // LCD 출력
+  lcd.setCursor(0, 0);
+  lcd.print("Distance: ");
+  lcd.print(distance);
+  lcd.print(" cm  ");
+  
+  // 20cm 이하일 때 LED 켜기
+  if (distance <= 20) {
+    digitalWrite(ledPin, HIGH);
+    lcd.setCursor(0, 1);
+    lcd.print("WARNING: CLOSE! ");
+  } else {
+    digitalWrite(ledPin, LOW);
+    lcd.setCursor(0, 1);
+    lcd.print("                ");
+  }
+  
+  delay(500);
+}</code></pre>
+                    <button class="copy-btn" onclick="copyCode(7)">복사</button>
+                </div>
+                <div class="learning-points">
+                    <h4>학습 포인트</h4>
+                    <ul>
+                        <li>초음파 센서 동작 원리</li>
+                        <li>pulseIn() 함수 사용</li>
+                        <li>거리 계산 공식</li>
+                        <li>LCD I2C 통신</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Problem 8 -->
+            <div class="problem-card intermediate" data-difficulty="intermediate">
+                <div class="problem-header">
+                    <h2 class="problem-title">문제 8: RGB LED 색상 제어</h2>
+                    <span class="difficulty-badge intermediate">중급</span>
+                </div>
+                <div class="stars">⭐⭐⭐☆☆</div>
+                <p class="problem-description">
+                    RGB LED를 사용하여 빨강, 초록, 파랑, 노랑, 보라, 청록, 흰색을 순서대로 표시하는 프로그램을 작성하시오.
+                </p>
+                <div class="requirements">
+                    <h4>회로 구성</h4>
+                    <ul>
+                        <li>RGB LED: R(9번), G(10번), B(11번) - PWM 핀 사용</li>
+                    </ul>
+                    <h4>조건</h4>
+                    <ul>
+                        <li>각 색상을 1초씩 표시</li>
+                        <li>무한 반복</li>
+                    </ul>
+                </div>
+                <button class="toggle-btn" onclick="toggleCode(8)">
+                    <span>💡</span> 예시 답안 보기
+                </button>
+                <div class="code-container" id="code-8">
+                    <pre><code>const int redPin = 9;
+const int greenPin = 10;
+const int bluePin = 11;
+
+void setup() {
+  pinMode(redPin, OUTPUT);
+  pinMode(greenPin, OUTPUT);
+  pinMode(bluePin, OUTPUT);
+  Serial.begin(9600);
+}
+
+void setColor(int red, int green, int blue) {
+  analogWrite(redPin, red);
+  analogWrite(greenPin, green);
+  analogWrite(bluePin, blue);
+}
+
+void loop() {
+  Serial.println("빨강");
+  setColor(255, 0, 0);
+  delay(1000);
+  
+  Serial.println("초록");
+  setColor(0, 255, 0);
+  delay(1000);
+  
+  Serial.println("파랑");
+  setColor(0, 0, 255);
+  delay(1000);
+  
+  Serial.println("노랑");
+  setColor(255, 255, 0);
+  delay(1000);
+  
+  Serial.println("보라");
+  setColor(255, 0, 255);
+  delay(1000);
+  
+  Serial.println("청록");
+  setColor(0, 255, 255);
+  delay(1000);
+  
+  Serial.println("흰색");
+  setColor(255, 255, 255);
+  delay(1000);
+  
+  Serial.println("꺼짐");
+  setColor(0, 0, 0);
+  delay(1000);
+}</code></pre>
+                    <button class="copy-btn" onclick="copyCode(8)">복사</button>
+                </div>
+                <div class="learning-points">
+                    <h4>학습 포인트</h4>
+                    <ul>
+                        <li>RGB 색상 혼합 원리</li>
+                        <li>함수 정의 및 사용</li>
+                        <li>PWM을 이용한 색상 제어</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Problem 9 -->
+            <div class="problem-card advanced" data-difficulty="advanced">
+                <div class="problem-header">
+                    <h2 class="problem-title">문제 9: 스마트 식물 관리 시스템</h2>
+                    <span class="difficulty-badge advanced">고급</span>
+                </div>
+                <div class="stars">⭐⭐⭐⭐☆</div>
+                <p class="problem-description">
+                    토양 습도 센서와 조도 센서를 사용하여 식물 관리 시스템을 만드시오.
+                </p>
+                <div class="requirements">
+                    <h4>기능 요구사항</h4>
+                    <ul>
+                        <li>토양이 건조하면 (센서 값 < 300) 물 펌프 작동</li>
+                        <li>어두우면 (조도 < 500) LED 조명 켜기</li>
+                        <li>LCD에 현재 상태 표시</li>
+                        <li>시리얼 모니터에 센서 값 출력</li>
+                    </ul>
+                    <h4>회로 구성</h4>
+                    <ul>
+                        <li>토양 습도 센서: A0</li>
+                        <li>조도 센서(CDS): A1</li>
+                        <li>릴레이 모듈: 7번 핀</li>
+                        <li>LED: 8번 핀</li>
+                        <li>LCD 1602: I2C</li>
+                    </ul>
+                </div>
+                <button class="toggle-btn" onclick="toggleCode(9)">
+                    <span>💡</span> 예시 답안 보기
+                </button>
+                <div class="code-container" id="code-9">
+                    <pre><code>#include &lt;LiquidCrystal_I2C.h&gt;
+
+const int soilPin = A0;
+const int lightPin = A1;
+const int pumpPin = 7;
+const int ledPin = 8;
+
+const int soilThreshold = 300;
+const int lightThreshold = 500;
+
+LiquidCrystal_I2C lcd(0x27, 16, 2);
+
+void setup() {
+  pinMode(pumpPin, OUTPUT);
+  pinMode(ledPin, OUTPUT);
+  
+  lcd.init();
+  lcd.backlight();
+  Serial.begin(9600);
+  
+  lcd.setCursor(0, 0);
+  lcd.print("Smart Plant");
+  lcd.setCursor(0, 1);
+  lcd.print("System Ready");
+  delay(2000);
+}
+
+void loop() {
+  int soilValue = analogRead(soilPin);
+  int lightValue = analogRead(lightPin);
+  
+  Serial.print("토양 습도: ");
+  Serial.print(soilValue);
+  Serial.print(" | 조도: ");
+  Serial.println(lightValue);
+  
+  lcd.setCursor(0, 0);
+  lcd.print("S:");
+  lcd.print(soilValue);
+  lcd.print(" L:");
+  lcd.print(lightValue);
+  lcd.print("   ");
+  
+  if (soilValue < soilThreshold) {
+    digitalWrite(pumpPin, HIGH);
+    lcd.setCursor(0, 1);
+    lcd.print("Pump:ON ");
+  } else {
+    digitalWrite(pumpPin, LOW);
+    lcd.setCursor(0, 1);
+    lcd.print("Pump:OFF");
+  }
+  
+  if (lightValue < lightThreshold) {
+    digitalWrite(ledPin, HIGH);
+    lcd.setCursor(9, 1);
+    lcd.print("L:ON ");
+  } else {
+    digitalWrite(ledPin, LOW);
+    lcd.setCursor(9, 1);
+    lcd.print("L:OFF");
+  }
+  
+  delay(2000);
+}</code></pre>
+                    <button class="copy-btn" onclick="copyCode(9)">복사</button>
+                </div>
+                <div class="learning-points">
+                    <h4>학습 포인트</h4>
+                    <ul>
+                        <li>다중 센서 통합</li>
+                        <li>릴레이 모듈 제어</li>
+                        <li>실시간 모니터링 시스템</li>
+                        <li>자동화 제어 로직</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Problem 10 -->
+            <div class="problem-card advanced" data-difficulty="advanced">
+                <div class="problem-header">
+                    <h2 class="problem-title">문제 10: IoT 온습도 모니터링 (ESP32)</h2>
+                    <span class="difficulty-badge advanced">고급</span>
+                </div>
+                <div class="stars">⭐⭐⭐⭐⭐</div>
+                <p class="problem-description">
+                    ESP32와 DHT22 센서를 사용하여 WiFi를 통해 웹 서버에서 온습도를 실시간으로 확인할 수 있는 시스템을 만드시오.
+                </p>
+                <div class="requirements">
+                    <h4>기능 요구사항</h4>
+                    <ul>
+                        <li>WiFi 연결</li>
+                        <li>웹 서버 구동</li>
+                        <li>온습도 데이터를 HTML 페이지로 표시</li>
+                        <li>자동 새로고침 (5초마다)</li>
+                    </ul>
+                    <h4>회로 구성</h4>
+                    <ul>
+                        <li>ESP32</li>
+                        <li>DHT22 센서: GPIO 4번</li>
+                    </ul>
+                </div>
+                <button class="toggle-btn" onclick="toggleCode(10)">
+                    <span>💡</span> 예시 답안 보기
+                </button>
+                <div class="code-container" id="code-10">
+                    <pre><code>#include &lt;WiFi.h&gt;
+#include &lt;WebServer.h&gt;
+#include &lt;DHT.h&gt;
+
+const char* ssid = "YOUR_WIFI_SSID";
+const char* password = "YOUR_WIFI_PASSWORD";
+
+#define DHTPIN 4
+#define DHTTYPE DHT22
+DHT dht(DHTPIN, DHTTYPE);
+
+WebServer server(80);
+
+void setup() {
+  Serial.begin(115200);
+  dht.begin();
+  
+  WiFi.begin(ssid, password);
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
+  
+  Serial.println("\nWiFi 연결 성공!");
+  Serial.print("IP 주소: ");
+  Serial.println(WiFi.localIP());
+  
+  server.on("/", handleRoot);
+  server.begin();
+}
+
+void loop() {
+  server.handleClient();
+}
+
+void handleRoot() {
+  float temperature = dht.readTemperature();
+  float humidity = dht.readHumidity();
+  
+  String html = "&lt;!DOCTYPE html&gt;&lt;html&gt;&lt;head&gt;";
+  html += "&lt;meta charset='UTF-8'&gt;";
+  html += "&lt;title&gt;ESP32 온습도 모니터&lt;/title&gt;";
+  html += "&lt;style&gt;";
+  html += "body{font-family:Arial;text-align:center;";
+  html += "background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);";
+  html += "color:white;padding:50px;}";
+  html += ".data{font-size:3em;margin:20px 0;font-weight:bold;}";
+  html += "&lt;/style&gt;";
+  html += "&lt;script&gt;setInterval(function(){location.reload();},5000);&lt;/script&gt;";
+  html += "&lt;/head&gt;&lt;body&gt;";
+  html += "&lt;h1&gt;🌡️ 온습도 모니터&lt;/h1&gt;";
+  
+  if (!isnan(temperature) && !isnan(humidity)) {
+    html += "&lt;div&gt;온도&lt;/div&gt;";
+    html += "&lt;div class='data'&gt;" + String(temperature, 1) + " °C&lt;/div&gt;";
+    html += "&lt;div&gt;습도&lt;/div&gt;";
+    html += "&lt;div class='data'&gt;" + String(humidity, 1) + " %&lt;/div&gt;";
+  }
+  
+  html += "&lt;/body&gt;&lt;/html&gt;";
+  server.send(200, "text/html", html);
+}</code></pre>
+                    <button class="copy-btn" onclick="copyCode(10)">복사</button>
+                </div>
+                <div class="learning-points">
+                    <h4>학습 포인트</h4>
+                    <ul>
+                        <li>ESP32 WiFi 연결</li>
+                        <li>웹 서버 구축</li>
+                        <li>HTML/CSS를 이용한 UI 구성</li>
+                        <li>IoT 시스템 구현</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>© 2026 공업고등학교 마이크로 컨트롤러 제어 과정</p>
+        <p style="margin-top: 0.5rem; opacity: 0.8;">Made with ❤️ for education</p>
+    </div>
+
+    <script>
+        function toggleCode(id) {
+            const codeContainer = document.getElementById(`code-${id}`);
+            codeContainer.classList.toggle('show');
+        }
+
+        function copyCode(id) {
+            const codeElement = document.querySelector(`#code-${id} code`);
+            const text = codeElement.textContent;
+
+            navigator.clipboard.writeText(text).then(() => {
+                const btn = document.querySelector(`#code-${id} .copy-btn`);
+                const originalText = btn.textContent;
+                btn.textContent = '복사됨!';
+                btn.style.background = 'rgba(74, 222, 128, 0.9)';
+
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.style.background = 'rgba(102, 126, 234, 0.9)';
+                }, 2000);
+            });
+        }
+
+        // Filter functionality
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        const problemCards = document.querySelectorAll('.problem-card');
+
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const filter = btn.dataset.filter;
+
+                // Update active button
+                filterBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+
+                // Filter cards
+                problemCards.forEach(card => {
+                    if (filter === 'all' || card.dataset.difficulty === filter) {
+                        card.style.display = 'block';
+                        card.style.animation = 'slideDown 0.3s ease-out';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            });
+        });
+
+        // Scroll animation
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, { threshold: 0.1 });
+
+        problemCards.forEach(card => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            card.style.transition = 'opacity 0.5s, transform 0.5s';
+            observer.observe(card);
+        });
+    </script>
+</body>
+
+</html>

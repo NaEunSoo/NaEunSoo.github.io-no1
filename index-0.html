@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>마이크로컨트롤러 제어 기초 | 2학년 공업고등학교</title>
+    <meta name="description" content="공업고등학교 2학년 수준에 맞춘 마이크로컨트롤러 제어의 핵심 기초 개념 학습 자료입니다.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.1/umd/lucide.min.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Navigation -->
+        <nav class="navbar">
+            <div class="logo">
+                <i data-lucide="cpu"></i>
+                <span>MCU MASTER CLASS</span>
+            </div>
+            <div class="nav-links">
+                <a href="#intro" class="active">개요</a>
+                <a href="#structure">구조</a>
+                <a href="#signals">신호</a>
+                <a href="#programming">프로그래밍</a>
+                <a href="#simulation">시뮬레이션</a>
+            </div>
+        </nav>
+
+        <!-- Hero Section -->
+        <header id="intro" class="hero">
+            <div class="hero-content">
+                <span class="badge">공업고등학교 2학년 과정</span>
+                <h1>마이크로컨트롤러<br><span class="gradient-text">완벽 이해하기</span></h1>
+                <p>전자 기기의 두뇌, 마이크로컨트롤러(MCU)의 세계에 오신 것을 환영합니다.<br>입력부터 출력까지, 제어의 모든 과정을 시각적으로 배워보세요.</p>
+                <a href="#structure" class="btn-primary">학습 시작하기 <i data-lucide="arrow-right"></i></a>
+            </div>
+            <div class="hero-visual">
+                <div class="mcu-chip-visual">
+                    <div class="pin pin-left"></div>
+                    <div class="pin pin-right"></div>
+                    <div class="chip-body">
+                        <div class="chip-label">MCU</div>
+                        <div class="chip-circuit"></div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Concept 1: Analog vs Human -->
+        <section id="analogy" class="section">
+            <div class="section-header">
+                <h2>사람 vs 마이크로컨트롤러</h2>
+                <p>MCU는 사람의 신체 구조와 매우 비슷하게 작동합니다.</p>
+            </div>
+            
+            <div class="comparison-cards">
+                <div class="card">
+                    <div class="icon-box human">
+                        <i data-lucide="user"></i>
+                    </div>
+                    <h3>사람 (Human)</h3>
+                    <ul class="comparison-list">
+                        <li>
+                            <span class="label">입력 (Input)</span>
+                            <span class="value">눈, 귀, 코 (감각기관)</span>
+                        </li>
+                        <li>
+                            <span class="label">처리 (Process)</span>
+                            <span class="value">뇌 (Brain)</span>
+                        </li>
+                        <li>
+                            <span class="label">출력 (Output)</span>
+                            <span class="value">손, 발, 목소리 (반응)</span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <div class="icon-box mcu">
+                        <i data-lucide="cpu"></i>
+                    </div>
+                    <h3>마이크로컨트롤러 (MCU)</h3>
+                    <ul class="comparison-list">
+                        <li>
+                            <span class="label">입력 (Input)</span>
+                            <span class="value">스위치, 센서</span>
+                        </li>
+                        <li>
+                            <span class="label">처리 (Process)</span>
+                            <span class="value">CPU (중앙처리장치)</span>
+                        </li>
+                        <li>
+                            <span class="label">출력 (Output)</span>
+                            <span class="value">LED, 모터, 부저</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Concept 2: Structure -->
+        <section id="structure" class="section dark-bg">
+            <div class="section-header">
+                <h2>MCU의 3대 요소</h2>
+                <p>마이크로컨트롤러를 구성하는 핵심 요소들을 알아봅시다.</p>
+            </div>
+
+            <div class="features-grid">
+                <div class="feature-card">
+                    <i data-lucide="arrow-right-circle" class="feature-icon"></i>
+                    <h3>입력 (Input)</h3>
+                    <p>외부의 상태를 읽어들이는 과정입니다. 버튼이 눌렸는지, 온도가 몇 도인지 확인합니다.</p>
+                    <div class="mini-tag">센서, 스위치</div>
+                </div>
+                <div class="feature-card highlight">
+                    <i data-lucide="cpu" class="feature-icon"></i>
+                    <h3>처리 (Processing)</h3>
+                    <p>입력된 정보를 바탕으로 판단하고 계산합니다. "만약(If) 버튼이 눌리면"</p>
+                    <div class="mini-tag">CPU, 메모리</div>
+                </div>
+                <div class="feature-card">
+                    <i data-lucide="zap" class="feature-icon"></i>
+                    <h3>출력 (Output)</h3>
+                    <p>판단 결과에 따라 외부 장치를 제어합니다. LED를 켜거나 모터를 돌립니다.</p>
+                    <div class="mini-tag">액추에이터</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Concept 3: Signals -->
+        <section id="signals" class="section">
+            <div class="section-header">
+                <h2>디지털 vs 아날로그</h2>
+                <p>MCU가 세상을 이해하는 두 가지 언어입니다.</p>
+            </div>
+
+            <div class="signal-demo-container">
+                <div class="signal-box">
+                    <h3>디지털 신호 (Digital)</h3>
+                    <div class="signal-graph digital-graph">
+                        <canvas id="digitalCanvas"></canvas>
+                    </div>
+                    <div class="signal-desc">
+                        <span class="status-badge on">ON (1, High, 5V)</span>
+                        <span class="status-badge off">OFF (0, Low, 0V)</span>
+                        <p>딱 두 가지 상태만 존재합니다. 전등 스위치와 같습니다.</p>
+                    </div>
+                </div>
+
+                <div class="signal-box">
+                    <h3>아날로그 신호 (Analog)</h3>
+                    <div class="signal-graph analog-graph">
+                        <canvas id="analogCanvas"></canvas>
+                    </div>
+                    <div class="signal-desc">
+                        <span class="status-badge variable">연속적인 값 (0 ~ 1023)</span>
+                        <p>소리의 크기나 빛의 밝기처럼 연속적으로 변하는 값입니다.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Interactive Simulation -->
+        <section id="simulation" class="section highlight-section">
+            <div class="simulation-wrapper">
+                <div class="sim-header">
+                    <h2>가상 실습: LED 제어하기</h2>
+                    <p>버튼을 눌러 MCU에 입력 신호를 보내고, 출력이 어떻게 변하는지 확인해보세요.</p>
+                </div>
+
+                <div class="sim-board">
+                    <div class="board-layout">
+                        <!-- Input Side -->
+                        <div class="component-group input-group">
+                            <h4>입력 장치 (Input)</h4>
+                            <button id="simButton" class="electronic-btn">
+                                <div class="btn-top">PUSH</div>
+                                <div class="btn-base"></div>
+                            </button>
+                            <div class="signal-line input-line">
+                                <span class="signal-flow"></span>
+                            </div>
+                        </div>
+
+                        <!-- MCU Center -->
+                        <div class="mcu-chip">
+                            <div class="chip-name">ATmega328P</div>
+                            <div class="logic-display">
+                                <span class="code-line">if (button == <span class="chk-high">HIGH</span>)</span>
+                                <span class="code-line indent">led = <span class="set-on">ON</span>;</span>
+                                <span class="code-line">else</span>
+                                <span class="code-line indent">led = <span class="set-off">OFF</span>;</span>
+                            </div>
+                        </div>
+
+                        <!-- Output Side -->
+                        <div class="component-group output-group">
+                            <div class="signal-line output-line">
+                                <span class="signal-flow"></span>
+                            </div>
+                            <h4>출력 장치 (Output)</h4>
+                            <div id="simLed" class="electronic-led">
+                                <div class="led-bulb"></div>
+                                <div class="led-legs"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <footer>
+            <p>© 2026 공업고등학교 마이크로컨트롤러 기초 학습 자료</p>
+        </footer>
+    </div>
+    <script src="script.js"></script>
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>
